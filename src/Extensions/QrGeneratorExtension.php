@@ -95,7 +95,7 @@ class QrGeneratorExtension extends Extension
         return $result->getString();
     }
 
-    private function getQrCodeAssetsPath(): string
+    public function getQrCodeAssetsPath(): string
     {
         $qrPath = 'qr';
 
@@ -179,10 +179,10 @@ class QrGeneratorExtension extends Extension
      */
     private function deleteQRCode(): ?bool
     {
-        $filename = $this->getQrCodeAssetsPath() . $this->getQrCodeFilename();
+        $file = $this->getQrCodeAssetsPath() . $this->getQrCodeFilename();
 
-        if (file_exists($filename)) {
-            return unlink($filename);
+        if (file_exists($file)) {
+            return unlink($file);
         }
 
         return null;
