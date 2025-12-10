@@ -4,6 +4,6 @@ After:
   - 'framework/*'
 ---
 
-SiteTree:
+SilverStripe\CMS\Model\SiteTree:
   extensions:
-    - QrGeneratorExtension
+    - Netwerkstatt\QrGenerator\Extensions\QrGeneratorExtension

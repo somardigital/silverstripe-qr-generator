@@ -25,7 +25,9 @@
     },
     "suggest": {
     },
-    "extra": {
-        "installer-name": "qr-generator"
+    "autoload": {
+        "psr-4": {
+            "Netwerkstatt\\QrGenerator\\": "src/"
+        }
     }
 }
