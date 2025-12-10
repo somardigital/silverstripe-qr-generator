@@ -1,7 +1,5 @@
 ---
 Name: qr-generator
-After:
-  - 'framework/*'
 ---
 
 SilverStripe\CMS\Model\SiteTree:
