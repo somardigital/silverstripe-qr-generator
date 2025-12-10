@@ -11,7 +11,7 @@
         {
             "name": "Werner Krauß",
             "email": "werner.krauss@netwerkstatt.at",
-            "homepage": "http://www.netwerkstatt.at",
+            "homepage": "https://www.netwerkstatt.at",
             "role": "Developer"
         }
     ],
@@ -19,9 +19,9 @@
         "issues": "https://github.com/wernerkrauss/silverstripe-qr-generator/issues"
     },
     "require": {
-        "silverstripe/framework": "^3.6.0",
-        "silverstripe/cms": "^3.6.0",
-        "endroid/qrcode": "^2.2.3"
+        "silverstripe/framework": "^5.0.0",
+        "silverstripe/cms": "^5.0.0",
+        "endroid/qrcode": "~6.0.9"
     },
     "suggest": {
     },
