@@ -10,6 +10,7 @@ use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Extension;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\HeaderField;
@@ -21,20 +22,28 @@ use SilverStripe\View\Parsers\URLSegmentFilter;
  */
 class QrGeneratorExtension extends Extension
 {
+    private static $showQrTabInCms = false;
+
     public function updateCMSFields(FieldList $fields)
     {
         if (!$this->getOwner()->isInDB()) {
             return;
         }
 
-        $fields->addFieldsToTab('Root.QR', [
-            HeaderField::create('QRHeading', _t('QrGeneratorExtension.Title', 'QR Code'), 2),
-            LiteralField::create('QRContent',
-                '<p><img src="data:image/png;base64,' . $this->getQRCodeBase64() . '" /></p>'),
-            LiteralField::create('QRDownload', '<p><a href="' . $this->getQRCodeURL() . '" target="_blank">'
-                . _t('QrGeneratorExtension.Download', 'Download')
-                . '</a></p>')
-        ]);
+        $config = Config::inst();
+        if ($config->get(self::class, 'showQrTabInCms') ||
+            $config->get(get_class($this->getOwner()), 'showQrTabInCms')
+        ) {
+            $fields->addFieldsToTab('Root.QR', [
+                HeaderField::create('QRHeading', _t('QrGeneratorExtension.Title', 'QR Code'), 2),
+                LiteralField::create('QRContent',
+                    '<p><img src="data:image/png;base64,' . $this->getQRCodeBase64() . '" /></p>'),
+                LiteralField::create('QRDownload', '<p><a href="' . $this->getQRCodeURL() . '" target="_blank">'
+                    . _t('QrGeneratorExtension.Download', 'Download')
+                    . '</a></p>')
+            ]);
+        }
+
     }
 
     /**
