@@ -3,50 +3,46 @@
 namespace Netwerkstatt\QrGenerator\Tasks;
 
 use Netwerkstatt\QrGenerator\Extensions\QrGeneratorExtension;
-use SilverStripe\Control\Director;
-use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\BuildTask;
-use SilverStripe\ORM\DataObject;
-use Symbiote\QueuedJobs\DataObjects\QueuedJobDescriptor;
+use SilverStripe\PolyExecution\PolyOutput;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 
 /**
- * An administrative task to delete all queued jobs records from the database.
- * Use with caution!
+ * Administrative task to delete all cached QR code images from disk.
+ * QR codes are regenerated on next request.
  */
 class DeleteAllCachedQRCodesTask extends BuildTask
 {
-    /**
-     * @inheritdoc
-     * @return string
-     */
-    public function getTitle(): string
+    protected string $title = 'Delete all cached QR codes.';
+
+    protected static string $description = 'Remove all cached QR codes. QR codes are generated on request.';
+
+    protected static string $commandName = 'delete-all-cached-qr-codes';
+
+    public function getOptions(): array
     {
-        return "Delete all cached QR codes.";
+        return [
+            new InputOption(
+                'confirm',
+                null,
+                InputOption::VALUE_NONE,
+                'Actually delete files (otherwise lists what would be deleted).'
+            ),
+        ];
     }
 
-    /**
-     * @inheritdoc
-     * @return string
-     */
-    public function getDescription(): string
-    {
-        return "Remove all cached QR codes. QR codes are generated on request.";
-    }
-
-    /**
-     * Run the task
-     * @param HTTPRequest $request
-     */
-    public function run($request): void
+    protected function execute(InputInterface $input, PolyOutput $output): int
     {
         $classesWithExtension = ClassInfo::classesWithExtension(QrGeneratorExtension::class);
+        $confirm = (bool) $input->getOption('confirm');
 
-        $confirm = $request->getVar('confirm');
         if (!$confirm) {
-            $this->logMessage("Really delete all cached QR code images? Please add ?confirm=1 to the URL to confirm.");
-            $this->logMessage("List of files that would be deleted:");
+            $output->writeln('Really delete all cached QR code images? Re-run with --confirm to apply.');
+            $output->writeln('List of files that would be deleted:');
         }
 
         $folders = [];
@@ -57,22 +53,21 @@ class DeleteAllCachedQRCodesTask extends BuildTask
                 $folders[] = rtrim($folder, DIRECTORY_SEPARATOR);
             }
         }
+
         foreach ($folders as $folder) {
             foreach (glob($folder . '/*') as $file) {
-                if (is_file($file)) {
-                    if ($confirm) {
-                        $this->logMessage("Deleting $file");
-                        unlink($file);
-                    } else {
-                        $this->logMessage($file);
-                    }
+                if (!is_file($file)) {
+                    continue;
+                }
+                if ($confirm) {
+                    $output->writeln("Deleting $file");
+                    unlink($file);
+                } else {
+                    $output->writeln($file);
                 }
             }
         }
-    }
 
-    private function logMessage($message): void
-    {
-        echo $message . (Director::is_cli() ? PHP_EOL : '<br>');
+        return Command::SUCCESS;
     }
 }

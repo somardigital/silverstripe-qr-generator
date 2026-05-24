@@ -19,8 +19,8 @@
         "issues": "https://github.com/wernerkrauss/silverstripe-qr-generator/issues"
     },
     "require": {
-        "silverstripe/framework": "^5.0.0",
-        "silverstripe/cms": "^5.0.0",
+        "silverstripe/framework": "^6.0.0",
+        "silverstripe/cms": "^6.0.0",
         "endroid/qrcode": "~6.0.9"
     },
     "suggest": {
